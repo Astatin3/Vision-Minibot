@@ -48,12 +48,12 @@ public class RobotContainer {
     /* Subsystems */
     // private final LED m_robotLED = new LED();
 
-    public final SwerveDrive m_robotSwerveDrive = new SwerveDrive(m_robotMap.leftFront,
-                                                                  m_robotMap.rightFront,
-                                                                  m_robotMap.leftBack,
-                                                                  m_robotMap.rightBack,
+    // public final SwerveDrive m_robotSwerveDrive = new SwerveDrive(m_robotMap.leftFront,
+    //                                                               m_robotMap.rightFront,
+    //                                                               m_robotMap.leftBack,
+    //                                                               m_robotMap.rightBack,
                                               
-                                                                  m_robotMap.gyro);
+    //                                                               m_robotMap.gyro);
 
     /* Controllers */
     private final DeadbandedXboxController m_driverXbox   = new DeadbandedXboxController(OIConstants.XBOX_DRIVER_ID);
@@ -69,10 +69,10 @@ public class RobotContainer {
     // ! /*  Autos */
     private String lastAutoName = "defualt.auto";
     private ConfigurableString autoplaybackName = new ConfigurableString("Auto Playback Name", lastAutoName);
-    private neoJoystickPlayback autoPlayback = new neoJoystickPlayback(m_robotSwerveDrive, 
-    () -> autoplaybackName.get(), // lastAutoName
-           new VirtualController[]{getVirtualDriverController(), getVirtualOperatorController()},
-           true, false);
+    // private neoJoystickPlayback autoPlayback = new neoJoystickPlayback(m_robotSwerveDrive, 
+    // () -> autoplaybackName.get(), // lastAutoName
+    //        new VirtualController[]{getVirtualDriverController(), getVirtualOperatorController()},
+    //        true, false);
     
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -80,20 +80,20 @@ public class RobotContainer {
     public RobotContainer() {
         configureButtonBindings();        
         configureVirtualButtonBindings();
-        new DeferredBlock(() -> m_robotSwerveDrive.resetGyroFlip());
+        // new DeferredBlock(() -> m_robotSwerveDrive.resetGyroFlip());
         DriverStation.silenceJoystickConnectionWarning(true);
         // CameraServer.startAutomaticCapture();
 
         /* Default Commands */
         // ! Swerve Drive Default Command (Regular Rotation)
         // drives the robot with a two-axis input from the driver controller
-        m_robotSwerveDrive.setDefaultCommand(new RunCommand(() -> {
-            m_robotSwerveDrive.driveWithInput(getDeadbandedDriverController().getLeft(),
+        m_robotMap.tankDrive.setDefaultCommand(new RunCommand(() -> {
+            m_robotMap.tankDrive.driveWithInput(getDeadbandedDriverController().getLeft(),
                                             getDeadbandedDriverController().getRight(),
                                 true);
-        }, m_robotSwerveDrive)
+        }, m_robotMap.tankDrive)
         .withName("SwerveDrive DefaultCommand"));
-        m_robotSwerveDrive.setToSlow();
+        // m_robotMap.tankDrive.setToSlow();
 
         // ! Swerve Drive One Module Test
         // m_robotSwerveDrive.setDefaultCommand(new RunCommand(() -> {
@@ -133,39 +133,39 @@ public class RobotContainer {
 
         // ? /* Driver Buttons */
 
-        DualJoystickButton(getDeadbandedDriverController(), getVirtualDriverController(), XboxController.A_BUTTON)
-            .onTrue(new InstantCommand(() -> m_robotSwerveDrive.resetGyroFlip()));
+        // DualJoystickButton(getDeadbandedDriverController(), getVirtualDriverController(), XboxController.A_BUTTON)
+        //     .onTrue(new InstantCommand(() -> m_robotSwerveDrive.resetGyroFlip()));
             
-        // ! /* Speed */
-        new JoystickButton(getDeadbandedDriverController(), XboxController.RIGHT_BUMPER_BUTTON) // final
-            .onTrue(new InstantCommand(()  -> m_robotSwerveDrive.shiftUp()));
+        // // ! /* Speed */
+        // new JoystickButton(getDeadbandedDriverController(), XboxController.RIGHT_BUMPER_BUTTON) // final
+        //     .onTrue(new InstantCommand(()  -> m_robotSwerveDrive.shiftUp()));
         
-        new JoystickButton(getDeadbandedDriverController(), XboxController.LEFT_BUMPER_BUTTON) // final
-            .onTrue(new InstantCommand(() -> m_robotSwerveDrive.shiftDown()));
+        // new JoystickButton(getDeadbandedDriverController(), XboxController.LEFT_BUMPER_BUTTON) // final
+        //     .onTrue(new InstantCommand(() -> m_robotSwerveDrive.shiftDown()));
 
-        new Trigger(() -> getDeadbandedDriverController().getPOV() == 270)
-            .onTrue(new InstantCommand(() -> m_robotSwerveDrive.shiftDownRot()));
+        // new Trigger(() -> getDeadbandedDriverController().getPOV() == 270)
+        //     .onTrue(new InstantCommand(() -> m_robotSwerveDrive.shiftDownRot()));
 
-        new Trigger(() -> getDeadbandedDriverController().getPOV() == 90)
-            .onTrue(new InstantCommand(() -> m_robotSwerveDrive.shiftUpRot()));
+        // new Trigger(() -> getDeadbandedDriverController().getPOV() == 90)
+        //     .onTrue(new InstantCommand(() -> m_robotSwerveDrive.shiftUpRot()));
           
         // ?  /* Operator Buttons */
             
         // ? /* Programer Buttons (Controller 3)*/
 
         // * /* Auto Recording */
-        new JoystickButton(m_autoRecorderXbox, XboxController.LEFT_BUMPER_BUTTON)
-            .whileTrue(new neoJoystickRecorder(m_robotSwerveDrive,
-                        new DeadbandedXboxController[]{getDeadbandedDriverController(), getDeadbandedOperatorController()},
-                                            () -> autoplaybackName.get()))
-            .onFalse(new InstantCommand());
+        // new JoystickButton(m_autoRecorderXbox, XboxController.LEFT_BUMPER_BUTTON)
+        //     .whileTrue(new neoJoystickRecorder(m_robotSwerveDrive,
+        //                 new DeadbandedXboxController[]{getDeadbandedDriverController(), getDeadbandedOperatorController()},
+        //                                     () -> autoplaybackName.get()))
+        //     .onFalse(new InstantCommand());
         
-        new JoystickButton(m_autoRecorderXbox, XboxController.RIGHT_BUMPER_BUTTON)
-            .onTrue(new neoJoystickPlayback(m_robotSwerveDrive,
-            () -> autoplaybackName.get(),
-            new VirtualController[]{getVirtualDriverController(), getVirtualOperatorController()},
-            true, false))
-            .onFalse(new InstantCommand());
+        // new JoystickButton(m_autoRecorderXbox, XboxController.RIGHT_BUMPER_BUTTON)
+        //     .onTrue(new neoJoystickPlayback(m_robotSwerveDrive,
+        //     () -> autoplaybackName.get(),
+        //     new VirtualController[]{getVirtualDriverController(), getVirtualOperatorController()},
+        //     true, false))
+        //     .onFalse(new InstantCommand());
     }
     
     /**
@@ -200,7 +200,10 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        return autoPlayback;
+        // return autoPlayback;
+        return new Command() {
+            
+        };
     }
 
     /**

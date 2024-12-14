@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class TankDrive extends SubsystemBase{
@@ -21,20 +22,22 @@ public class TankDrive extends SubsystemBase{
 
     private static final ControlMode mode = ControlMode.PercentOutput;
 
-    private static final double maxSpeed = 1.;
+    private static final double maxMoveSpeed = 0.6;
+    private static final double maxturnSpeed = 0.6;
 
-    private static final double[] turn = { //Right by default
-        -maxSpeed, //FR
-        maxSpeed,  //FL
-        maxSpeed,  //BL
-        -maxSpeed, //BR
+
+    private static final double[] turn = { //Right by default, motors are wired weirdly
+        maxturnSpeed, //FR
+        maxturnSpeed,  //FL
+        maxturnSpeed,  //BL
+        maxturnSpeed, //BR
     };
 
-    private static final double[] move = { //forward by default
-        maxSpeed,  //FR
-        maxSpeed,  //FL
-        maxSpeed,  //BL
-        maxSpeed,  //BR
+    private static final double[] move = { //forward by default, motors are wired weirdly
+        -maxMoveSpeed,  //FR
+        maxMoveSpeed,  //FL
+        maxMoveSpeed,  //BL
+        -maxMoveSpeed,  //BR
     };
 
     public void driveWithInput(Translation2d leftStick, Translation2d rightStick, boolean fieldRelative) {
@@ -50,5 +53,10 @@ public class TankDrive extends SubsystemBase{
         FL.set(mode, FL_rot);
         BL.set(mode, BL_rot);
         BR.set(mode, BR_rot);
+
+        SmartDashboard.putNumber("FR", FR_rot);
+        SmartDashboard.putNumber("FL", FL_rot);
+        SmartDashboard.putNumber("BL", BL_rot);
+        SmartDashboard.putNumber("BR", BR_rot);
     }
 }

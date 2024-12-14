@@ -48,23 +48,27 @@ public final class Constants {
         }
 
         public static final class IDs {
-            public static final int RIGHT_FRONT_WHEEL_ID = 2;
-            public static final int RIGHT_FRONT_STEER_ID = 3;
-            public static final int RIGHT_FRONT_ENCODER_ID = 10;
+            public static final int FR_ID = 22;
+            public static final int FL_ID = 20;
+            public static final int BL_ID = 21;
+            public static final int BR_ID = 23;
+            // public static final int RIGHT_FRONT_WHEEL_ID = 2;
+            // public static final int RIGHT_FRONT_STEER_ID = 3;
+            // public static final int RIGHT_FRONT_ENCODER_ID = 10;
             
-            public static final int LEFT_FRONT_WHEEL_ID = 4;
-            public static final int LEFT_FRONT_STEER_ID = 5;
-            public static final int LEFT_FRONT_ENCODER_ID = 11;
+            // public static final int LEFT_FRONT_WHEEL_ID = 4;
+            // public static final int LEFT_FRONT_STEER_ID = 5;
+            // public static final int LEFT_FRONT_ENCODER_ID = 11;
             
-            public static final int LEFT_BACK_WHEEL_ID = 6;
-            public static final int LEFT_BACK_STEER_ID = 7;
-            public static final int LEFT_BACK_ENCODER_ID = 12;
+            // public static final int LEFT_BACK_WHEEL_ID = 6;
+            // public static final int LEFT_BACK_STEER_ID = 7;
+            // public static final int LEFT_BACK_ENCODER_ID = 12;
             
-            public static final int RIGHT_BACK_WHEEL_ID = 8;  
-            public static final int RIGHT_BACK_STEER_ID = 9;
-            public static final int RIGHT_BACK_ENCODER_ID = 13;
+            // public static final int RIGHT_BACK_WHEEL_ID = 8;  
+            // public static final int RIGHT_BACK_STEER_ID = 9;
+            // public static final int RIGHT_BACK_ENCODER_ID = 13;
 
-            public static final int DRIVE_PIGEON_ID = 14;
+            // public static final int DRIVE_PIGEON_ID = 14;
         }
     
         public static final class PIDConstants {
@@ -143,7 +147,7 @@ public final class Constants {
         public static final int XBOX_DRIVER_ID = 0;
         public static final int XBOX_OPERATOR_ID = 1;
         public static final int XBOX_PROGRAMMER_ID = 2;
-        public static final double LEFT_AXIS_DEADBAND = 0.1;
+        public static final double LEFT_AXIS_DEADBAND = 0.20;
 
     }
 }
