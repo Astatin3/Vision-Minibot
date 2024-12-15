@@ -7,6 +7,8 @@
 
 package frc4388.robot;
 
+import com.pathplanner.lib.util.ReplanningConfig;
+
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import frc4388.utility.Gains;
 import frc4388.utility.LEDPatterns;
@@ -68,7 +70,7 @@ public final class Constants {
             // public static final int RIGHT_BACK_STEER_ID = 9;
             // public static final int RIGHT_BACK_ENCODER_ID = 13;
 
-            // public static final int DRIVE_PIGEON_ID = 14;
+            public static final int DRIVE_PIGEON_ID = 10;
         }
     
         public static final class PIDConstants {
@@ -88,6 +90,8 @@ public final class Constants {
             
             public static final double PATH_MAX_VEL = 0.3; // TODO: find the actual value
             public static final double PATH_MAX_ACC = 0.3; // TODO: find the actual value
+
+            public static final ReplanningConfig replanningConfig = new ReplanningConfig();
         }
     
         public static final class Conversions {
@@ -131,6 +135,7 @@ public final class Constants {
       }
     
     public static final class VisionConstants {
+        public static final String CAMERA_NAME = "photonvision";
     }
 
     public static final class DriveConstants {

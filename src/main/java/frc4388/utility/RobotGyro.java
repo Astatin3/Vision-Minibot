@@ -9,12 +9,15 @@ package frc4388.utility;
 
 // import com.ctre.phoenix.sensors.WPI_Pigeon2;
 import com.ctre.phoenix6.hardware.Pigeon2;
-import com.kauailabs.navx.frc.AHRS;
+// import com.kauailabs.navx.frc.AHRS;
 
 // import edu.wpi.first.wpilibj.GyroBase;
 // import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 
 /**
  * Gyro class that allows for interchangeable use between a pigeon and a navX
@@ -23,7 +26,7 @@ public class RobotGyro {
     private RobotTime m_robotTime = RobotTime.getInstance();
 
     private Pigeon2 m_pigeon = null;
-    private AHRS m_navX = null;
+    // private AHRS m_navX = null;
     public boolean m_isGyroAPigeon; //true if pigeon, false if navX
 
     private double m_lastPigeonAngle;
@@ -45,10 +48,10 @@ public class RobotGyro {
      * Creates a Gyro based on a navX
      * @param gyro the gyroscope to use for Gyro
      */
-    public RobotGyro(AHRS gyro){
-        m_navX = gyro;
-        m_isGyroAPigeon = false;
-    }
+    // public RobotGyro(AHRS gyro){
+    //     m_navX = gyro;
+    //     m_isGyroAPigeon = false;
+    // }
 
     /**
      * Resets yaw, pitch, and roll.
@@ -98,33 +101,33 @@ public class RobotGyro {
     public void reset() {
         resetZeroValues();
 
-        if (m_isGyroAPigeon) {
+        // if (m_isGyroAPigeon) {
             m_pigeon.setYaw(0);
-        } else {
-            m_navX.reset();
-        }
+        // } else {
+        //     // m_navX.reset();
+        // }
 
     }
 
     public void reset(double val) {
         resetZeroValues();
 
-        if (m_isGyroAPigeon) {
+        // if (m_isGyroAPigeon) {
             m_pigeon.setYaw(val);
-        } else {
-            m_navX.reset();
-        }
+        // } else {
+        //     // m_navX.reset();
+        // }
 
     }
 
     public void resetFlip() {
         resetZeroValues();
 
-        if (m_isGyroAPigeon) {
+        // if (m_isGyroAPigeon) {
             m_pigeon.setYaw(180);
-        } else {
-            m_navX.reset();
-        }
+        // } else {
+            // m_navX.reset();
+        // }
 
     }
 
@@ -134,7 +137,7 @@ public class RobotGyro {
         if (m_isGyroAPigeon) {
             m_pigeon.setYaw(90);
         } else {
-            m_navX.reset();
+            // m_navX.reset();
         }
         
     }
@@ -145,7 +148,7 @@ public class RobotGyro {
         if (m_isGyroAPigeon) {
             m_pigeon.setYaw(270);
         } else {
-            m_navX.reset();
+            // m_navX.reset();
         }
 
     }
@@ -156,7 +159,7 @@ public class RobotGyro {
         if (m_isGyroAPigeon) {
             m_pigeon.setYaw(60);
         } else {
-            m_navX.reset();
+            // m_navX.reset();
         }   
 
     }
@@ -167,7 +170,7 @@ public class RobotGyro {
         if (m_isGyroAPigeon) {
             m_pigeon.setYaw(-60);
         } else {
-            m_navX.reset();
+            // m_navX.reset();
         }   
 
     }
@@ -191,12 +194,30 @@ public class RobotGyro {
         return m_pigeon.getRotation2d();
     }
 
+    public Rotation3d getRotation3d() {
+        return m_pigeon.getRotation3d();
+    }
+
+    public Translation2d getAcceleration2d() {
+        return new Translation2d(
+            m_pigeon.getAccelerationX().getValue().baseUnitMagnitude(), 
+            m_pigeon.getAccelerationY().getValue().baseUnitMagnitude());
+    }
+
+
+    public Translation3d getAcceleration3d() {
+        return new Translation3d(
+            m_pigeon.getAccelerationX().getValue().baseUnitMagnitude(), 
+            m_pigeon.getAccelerationY().getValue().baseUnitMagnitude(), 
+            m_pigeon.getAccelerationZ().getValue().baseUnitMagnitude());
+    }
+
     public double getAngle() {
-        if (m_isGyroAPigeon) {
+        // if (m_isGyroAPigeon) {
             return getPigeonAngles()[2];
-        } else {
-            return m_navX.getAngle();
-        }
+        // } else {
+            // return m_navX.getAngle();
+        // }
     }
 
     public double getYaw() {
@@ -226,11 +247,11 @@ public class RobotGyro {
      * @return The current pitch value in degrees (-90 to 90).
      */
     public double getPitch() {
-        if (m_isGyroAPigeon) {
+        // if (m_isGyroAPigeon) {
             return MathUtil.clamp(getPigeonAngles()[1], -90, 90);
-        } else {
-            return MathUtil.clamp(m_navX.getPitch(), -90, 90);
-        }
+        // } else {
+            // return MathUtil.clamp(m_navX.getPitch(), -90, 90);
+        // }
     }
 
     /**
@@ -240,28 +261,28 @@ public class RobotGyro {
      * @return The current roll value in degrees (-90 to 90).
      */
     public double getRoll() {
-        if (m_isGyroAPigeon) {
+        // if (m_isGyroAPigeon) {
             return MathUtil.clamp(getPigeonAngles()[2], -90, 90);
-        } else {
-            return MathUtil.clamp(m_navX.getRoll(), -90, 90);
-        }
+        // } else {
+            // return MathUtil.clamp(m_navX.getRoll(), -90, 90);
+        // }
     }
 
     public double getRate() {
-        if (m_isGyroAPigeon) {
+        // if (m_isGyroAPigeon) {
             return m_deltaPigeonAngle / m_robotTime.m_deltaTime * 1000;
-        } else {
-            return m_navX.getRate();
-        }
+        // } else {
+        //     // return m_navX.getRate();
+        // }
     }
 
     public Pigeon2 getPigeon(){
         return m_pigeon;
     }
 
-    public AHRS getNavX(){
-        return m_navX;
-    }
+    // public AHRS getNavX(){
+    //     return m_navX;
+    // }
 
     public void close() throws Exception {
 

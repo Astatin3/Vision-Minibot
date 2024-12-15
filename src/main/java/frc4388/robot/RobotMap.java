@@ -8,6 +8,12 @@
 package frc4388.robot;
 
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+
+import edu.wpi.first.wpilibj2.command.Command;
+
+import org.photonvision.PhotonCamera;
+
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.Pigeon2;
@@ -15,6 +21,7 @@ import com.ctre.phoenix6.hardware.Pigeon2;
 // import edu.wpi.first.wpilibj.motorcontrol.Spark;
 // import frc4388.robot.Constants.LEDConstants;
 import frc4388.robot.Constants.SwerveDriveConstants;
+import frc4388.robot.Constants.VisionConstants;
 import frc4388.robot.subsystems.SwerveModule;
 import frc4388.robot.subsystems.TankDrive;
 import frc4388.utility.RobotGyro;
@@ -24,8 +31,9 @@ import frc4388.utility.RobotGyro;
  * testing and modularization.
  */
 public class RobotMap {
-    // private Pigeon2 m_pigeon2 = new Pigeon2(SwerveDriveConstants.IDs.DRIVE_PIGEON_ID);
-    // public RobotGyro gyro = new RobotGyro(m_pigeon2);
+    private Pigeon2 m_pigeon2 = new Pigeon2(SwerveDriveConstants.IDs.DRIVE_PIGEON_ID);
+    public RobotGyro gyro = new RobotGyro(m_pigeon2);
+    public PhotonCamera cam = new PhotonCamera(VisionConstants.CAMERA_NAME);
     
     // public SwerveModule leftFront;
     // public SwerveModule rightFront;
@@ -65,7 +73,6 @@ public class RobotMap {
     // public final CANcoder rightBackEncoder = new CANcoder(SwerveDriveConstants.IDs.RIGHT_BACK_ENCODER_ID);
 
     void configureDriveMotorControllers() {
-        this.tankDrive = new TankDrive(FR, FL, BL, BR);
         // initialize SwerveModules
         // this.rightFront = new SwerveModule(rightFrontWheel, rightFrontSteer, rightFrontEncoder, SwerveDriveConstants.DefaultSwerveRotOffsets.FRONT_RIGHT_ROT_OFFSET);
         // this.leftFront = new SwerveModule(leftFrontWheel, leftFrontSteer, leftFrontEncoder, SwerveDriveConstants.DefaultSwerveRotOffsets.FRONT_LEFT_ROT_OFFSET);

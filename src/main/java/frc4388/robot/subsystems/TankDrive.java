@@ -1,23 +1,52 @@
 package frc4388.robot.subsystems;
 
+import java.util.function.BooleanSupplier;
+import java.util.function.Function;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.controllers.PPLTVController;
+import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc4388.robot.Constants.SwerveDriveConstants.AutoConstants;
 
 public class TankDrive extends SubsystemBase{
     private TalonSRX FR;
     private TalonSRX FL;
     private TalonSRX BL;
     private TalonSRX BR;
+    private RobotLocalizer robotLocalizer;
 
-    public TankDrive(TalonSRX FR,TalonSRX FL,TalonSRX BL, TalonSRX BR){
+    public TankDrive(TalonSRX FR,TalonSRX FL,TalonSRX BL, TalonSRX BR, RobotLocalizer robotLocalizer){
         this.FR = FR;
         this.FL = FL;
         this.BL = BL;
         this.BR = BR;
+        this.robotLocalizer = robotLocalizer;
+
+        
+        // Configure AutoBuilder last
+        AutoBuilder.configureLTV(
+            robotLocalizer::getPose,
+            robotLocalizer::resetPose,
+            robotLocalizer::getChassisSpeeds,
+            robotLocalizer::setChassisSpeeds,
+            0.02, // Default loop time
+            AutoConstants.replanningConfig,
+            new BooleanSupplier() {
+                @Override
+                public boolean getAsBoolean() {
+                    return false;
+                }
+            },
+            this
+        );
     }
 
     private static final ControlMode mode = ControlMode.PercentOutput;
@@ -58,5 +87,6 @@ public class TankDrive extends SubsystemBase{
         SmartDashboard.putNumber("FL", FL_rot);
         SmartDashboard.putNumber("BL", BL_rot);
         SmartDashboard.putNumber("BR", BR_rot);
+
     }
 }

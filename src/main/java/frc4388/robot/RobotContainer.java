@@ -7,9 +7,13 @@
 
 package frc4388.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+
 // Drive Systems
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc4388.utility.controller.XboxController;
 import frc4388.utility.controller.DeadbandedXboxController;
 import frc4388.robot.Constants.OIConstants;
@@ -25,11 +29,11 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc4388.utility.controller.VirtualController;
 import frc4388.robot.commands.Swerve.neoJoystickPlayback;
 import frc4388.robot.commands.Swerve.neoJoystickRecorder;
-
+import frc4388.robot.subsystems.RobotLocalizer;
 // Subsystems
 // import frc4388.robot.subsystems.LED;
 import frc4388.robot.subsystems.SwerveDrive;
-
+import frc4388.robot.subsystems.TankDrive;
 // Utilites
 import frc4388.utility.DeferredBlock;
 import frc4388.utility.configurable.ConfigurableString;
@@ -55,6 +59,14 @@ public class RobotContainer {
                                               
     //                                                               m_robotMap.gyro);
 
+
+    // ! /*  Autos */
+    private final RobotLocalizer robotLocalizer = new RobotLocalizer(m_robotMap.gyro, m_robotMap.cam);
+    private final SendableChooser<Command> autoChooser;
+
+    
+    private final TankDrive tankDrive = new TankDrive(m_robotMap.FR, m_robotMap.FL, m_robotMap.BL, m_robotMap.BR, robotLocalizer);
+
     /* Controllers */
     private final DeadbandedXboxController m_driverXbox   = new DeadbandedXboxController(OIConstants.XBOX_DRIVER_ID);
     private final DeadbandedXboxController m_operatorXbox = new DeadbandedXboxController(OIConstants.XBOX_OPERATOR_ID);    
@@ -66,9 +78,9 @@ public class RobotContainer {
 
     // ! Teleop Commands
 
-    // ! /*  Autos */
-    private String lastAutoName = "defualt.auto";
-    private ConfigurableString autoplaybackName = new ConfigurableString("Auto Playback Name", lastAutoName);
+
+    // private String lastAutoName = "defualt.auto";
+    // private ConfigurableString autoplaybackName = new ConfigurableString("Auto Playback Name", lastAutoName);
     // private neoJoystickPlayback autoPlayback = new neoJoystickPlayback(m_robotSwerveDrive, 
     // () -> autoplaybackName.get(), // lastAutoName
     //        new VirtualController[]{getVirtualDriverController(), getVirtualOperatorController()},
@@ -87,11 +99,11 @@ public class RobotContainer {
         /* Default Commands */
         // ! Swerve Drive Default Command (Regular Rotation)
         // drives the robot with a two-axis input from the driver controller
-        m_robotMap.tankDrive.setDefaultCommand(new RunCommand(() -> {
-            m_robotMap.tankDrive.driveWithInput(getDeadbandedDriverController().getLeft(),
+        tankDrive.setDefaultCommand(new RunCommand(() -> {
+            tankDrive.driveWithInput(getDeadbandedDriverController().getLeft(),
                                             getDeadbandedDriverController().getRight(),
                                 true);
-        }, m_robotMap.tankDrive)
+        }, tankDrive)
         .withName("SwerveDrive DefaultCommand"));
         // m_robotMap.tankDrive.setToSlow();
 
@@ -120,7 +132,7 @@ public class RobotContainer {
 
 
 
-
+        autoChooser = AutoBuilder.buildAutoChooser();
     }
 
     /**
@@ -201,9 +213,7 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         // return autoPlayback;
-        return new Command() {
-            
-        };
+        return autoChooser.getSelected();
     }
 
     /**
