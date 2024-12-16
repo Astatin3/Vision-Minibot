@@ -14,6 +14,7 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc4388.utility.controller.XboxController;
 import frc4388.utility.controller.DeadbandedXboxController;
 import frc4388.robot.Constants.OIConstants;
@@ -133,6 +134,7 @@ public class RobotContainer {
 
 
         autoChooser = AutoBuilder.buildAutoChooser();
+        SmartDashboard.putData("Auto Chooser", autoChooser);
     }
 
     /**

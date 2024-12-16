@@ -211,6 +211,10 @@ public class RobotGyro {
             m_pigeon.getAccelerationY().getValue().baseUnitMagnitude(), 
             m_pigeon.getAccelerationZ().getValue().baseUnitMagnitude());
     }
+    
+    public double getAngularVelocity() {
+        return m_pigeon.getAngularVelocityYDevice().getValueAsDouble();
+    }
 
     public double getAngle() {
         // if (m_isGyroAPigeon) {

@@ -7,7 +7,15 @@
 
 package frc4388.robot;
 
-import com.pathplanner.lib.util.ReplanningConfig;
+import com.pathplanner.lib.config.ModuleConfig;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPLTVController;
+import com.pathplanner.lib.controllers.PathFollowingController;
+
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.system.plant.DCMotor;
+
+// import com.pathplanner.l;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import frc4388.utility.Gains;
@@ -91,7 +99,41 @@ public final class Constants {
             public static final double PATH_MAX_VEL = 0.3; // TODO: find the actual value
             public static final double PATH_MAX_ACC = 0.3; // TODO: find the actual value
 
-            public static final ReplanningConfig replanningConfig = new ReplanningConfig();
+            public static final double MASS = 10; // KG
+            public static final double MOI = 10;  // Moment of inertia
+
+            public static final double WHEEL_RADIUS = 0.05; // Meters
+            public static final double MAX_DRIVE_VELOCITY = 0.5; // Meters per second
+            public static final double MAX_ROT_SPEED = 0.2; // Rotations per second
+
+
+            public static final double COEFFICENT_OF_FRICTION = 1.0; // Between 0 and 1
+            public static final DCMotor TALON_SRX_MOTOR = DCMotor.getVex775Pro(1); //TODO: Get actual motor constants
+            public static final double DRIVE_CURRENT_LIMIT = 100000; //TODO: Get actual value
+
+
+            public static final ModuleConfig MODULE_CONFIG = new ModuleConfig(
+                WHEEL_RADIUS, 
+                MAX_DRIVE_VELOCITY, 
+                COEFFICENT_OF_FRICTION, 
+                TALON_SRX_MOTOR,
+                DRIVE_CURRENT_LIMIT, 
+                2);
+ 
+            public static final RobotConfig PP_ROBOT_CONFIG = new RobotConfig(
+                MASS, 
+                MOI, 
+                MODULE_CONFIG,
+                new Translation2d[] {
+                    new Translation2d(),
+                    new Translation2d(),
+                    new Translation2d(),
+                    new Translation2d(),
+                });
+
+                
+            public static final double ROBOT_LOOP_TIME = 0.02; // Time it takes for the robot to run a loop
+            public static final PathFollowingController PP_PATH_FOLLOWING_CONTROLLER = new PPLTVController(ROBOT_LOOP_TIME);
         }
     
         public static final class Conversions {
@@ -135,7 +177,7 @@ public final class Constants {
       }
     
     public static final class VisionConstants {
-        public static final String CAMERA_NAME = "photonvision";
+        public static final String CAMERA_NAME = "Camera_Module_v1";
     }
 
     public static final class DriveConstants {

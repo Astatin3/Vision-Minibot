@@ -4,6 +4,7 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.util.DriveFeedforwards;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -11,6 +12,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc4388.utility.RobotGyro;
@@ -29,17 +31,17 @@ public class RobotLocalizer extends SubsystemBase {
     @Override
     public void periodic() {
         // time
-        // Translation3d accel = gyro.getAcceleration();
+        Translation3d accel = gyro.getAcceleration3d();
 
-        // SmartDashboard.putNumber("Accel X", accel.getX());
-        // SmartDashboard.putNumber("Accel Y", accel.getY());
-        // SmartDashboard.putNumber("Accel Z", accel.getZ());
+        SmartDashboard.putNumber("Accel X", accel.getX());
+        SmartDashboard.putNumber("Accel Y", accel.getY());
+        SmartDashboard.putNumber("Accel Z", accel.getZ());
 
-        // Rotation3d rot = gyro.getRotation3d();
+        Rotation3d rot = gyro.getRotation3d();
 
-        // SmartDashboard.putNumber("Rot X", rot.getX());
-        // SmartDashboard.putNumber("Rot Y", rot.getY());
-        // SmartDashboard.putNumber("Rot Z", rot.getZ());
+        SmartDashboard.putNumber("Rot X", rot.getX());
+        SmartDashboard.putNumber("Rot Y", rot.getY());
+        SmartDashboard.putNumber("Rot Z", rot.getZ());
 
         // boolean tagExists = SmartDashboard.getBoolean("photonvision/Camera_Module_v1/hasTarget", false);
         
@@ -95,14 +97,10 @@ public class RobotLocalizer extends SubsystemBase {
 
     // PathPlanner
     public ChassisSpeeds getChassisSpeeds() {
-        return new ChassisSpeeds();
+        return new ChassisSpeeds(
+            0, 
+            0, 
+            Units.rotationsToRadians(gyro.getAngularVelocity())
+        );
     }
-    
-    // PathPlanner
-    public void setChassisSpeeds(ChassisSpeeds target) {
-        System.out.println(target);
-    }
-
-    
-
 }
