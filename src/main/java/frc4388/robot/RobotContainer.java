@@ -7,17 +7,17 @@
 
 package frc4388.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.commands.PathPlannerAuto;
-
 // Drive Systems
 import edu.wpi.first.wpilibj.DriverStation;
+
+import java.io.File;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc4388.utility.controller.XboxController;
+import frc4388.utility.controller.ButtonBox;
 import frc4388.utility.controller.DeadbandedXboxController;
-import frc4388.robot.Constants.OIConstants;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -25,88 +25,94 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-
 // Autos
 import frc4388.utility.controller.VirtualController;
-import frc4388.robot.commands.Swerve.neoJoystickPlayback;
-import frc4388.robot.commands.Swerve.neoJoystickRecorder;
-import frc4388.robot.subsystems.RobotLocalizer;
-// Subsystems
-// import frc4388.robot.subsystems.LED;
-import frc4388.robot.subsystems.SwerveDrive;
-import frc4388.robot.subsystems.TankDrive;
+import frc4388.robot.commands.wait.waitSupplier;
+import frc4388.robot.constants.Constants.OIConstants;
+import frc4388.robot.subsystems.differential.DiffDrive;
+
+import com.pathplanner.lib.commands.PathPlannerAuto;
+
 // Utilites
 import frc4388.utility.DeferredBlock;
-import frc4388.utility.configurable.ConfigurableString;
+import frc4388.utility.compute.TimesNegativeOne;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
  * Command-based is a "declarative" paradigm, very little robot logic should
  * actually be handled in the {@link Robot} periodic methods (other than the
- * scheduler calls). Instead, the structure of the robot (including subsystems,
+ * scheduler calls). Instead, the structure of the robot (2including subsystems,
  * commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
     /* RobotMap */
-    public final RobotMap m_robotMap = new RobotMap();
+    
+    public final RobotMap m_robotMap = RobotMap.configureReal();
     
     /* Subsystems */
-    // private final LED m_robotLED = new LED();
+    public final DiffDrive m_DiffDrive = new DiffDrive(m_robotMap.m_DiffDrive, m_robotMap.m_gyro);
+    // public final LED m_robotLED = new LED();
+    // public final Vision m_vision = new Vision(m_robotMap.leftCamera, m_robotMap.rightCamera);
+    // public final Elevator m_robotElevator = new Elevator(m_robotMap.elevator, m_robotMap.endeffector, m_robotMap.basinLimitSwitch, m_robotMap.endeffectorLimitSwitch, m_robotMap.IRIntakeBeam, m_robotLED);
+    // public final SwerveDrive m_robotSwerveDrive = new SwerveDrive(m_robotMap.swerveDrivetrain, m_vision);
+    // public final SwerveDrive m_robotSwerveDrive = new SwerveDrive(m_robotMap.swerveDrivetrain);
 
-    // public final SwerveDrive m_robotSwerveDrive = new SwerveDrive(m_robotMap.leftFront,
-    //                                                               m_robotMap.rightFront,
-    //                                                               m_robotMap.leftBack,
-    //                                                               m_robotMap.rightBack,
-                                              
-    //                                                               m_robotMap.gyro);
-
-
-    // ! /*  Autos */
-    private final RobotLocalizer robotLocalizer = new RobotLocalizer(m_robotMap.gyro, m_robotMap.cam);
-    private final SendableChooser<Command> autoChooser;
-
-    
-    private final TankDrive tankDrive = new TankDrive(m_robotMap.FR, m_robotMap.FL, m_robotMap.BL, m_robotMap.BR, robotLocalizer);
 
     /* Controllers */
     private final DeadbandedXboxController m_driverXbox   = new DeadbandedXboxController(OIConstants.XBOX_DRIVER_ID);
-    private final DeadbandedXboxController m_operatorXbox = new DeadbandedXboxController(OIConstants.XBOX_OPERATOR_ID);    
-    private final DeadbandedXboxController m_autoRecorderXbox = new DeadbandedXboxController(OIConstants.XBOX_PROGRAMMER_ID);
+    private final DeadbandedXboxController m_operatorXbox = new DeadbandedXboxController(OIConstants.XBOX_OPERATOR_ID);
+    private final ButtonBox m_buttonBox = new ButtonBox(OIConstants.BUTTONBOX_ID);
 
-    /* Virtual Controllers */
-    private final VirtualController m_virtualDriver = new VirtualController(0);
-    private final VirtualController m_virtualOperator = new VirtualController(1);
+    // public List<Subsystem> subsystems = new ArrayList<>();
 
     // ! Teleop Commands
+    public void stop() {
+        // new InstantCommand(()->{}, m_robotSwerveDrive).schedule();
+        // m_robotSwerveDrive.stopModules();
+        // Constants.AutoConstants.Y_OFFSET_TRIM.set(0);
+    }
 
+    // ! /*  Autos */
+    private SendableChooser<String> autoChooser;
+    private Command autoCommand;
 
-    // private String lastAutoName = "defualt.auto";
-    // private ConfigurableString autoplaybackName = new ConfigurableString("Auto Playback Name", lastAutoName);
-    // private neoJoystickPlayback autoPlayback = new neoJoystickPlayback(m_robotSwerveDrive, 
-    // () -> autoplaybackName.get(), // lastAutoName
-    //        new VirtualController[]{getVirtualDriverController(), getVirtualOperatorController()},
-    //        true, false);
-    
+    // private Command waitFeedStation = new waitSupplier(m_robotElevator::readyToMove);
+    // private Command waitDebuger = new waitSupplier(m_driverXbox::getYButtonPressed);
+    // private Command waitDebugerManual = new waitSupplier(m_driverXbox::getYButtonPressed);
+    private Command waitDebuger = new waitSupplier(() -> true);
+
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
         configureButtonBindings();        
         configureVirtualButtonBindings();
-        // new DeferredBlock(() -> m_robotSwerveDrive.resetGyroFlip());
+        
+        DeferredBlock.addBlock(() -> { // Called on first robot enable
+            // m_robotSwerveDrive.resetGyro();
+        }, false);
+        DeferredBlock.addBlock(() -> { // Called on every robot enable
+            TimesNegativeOne.update();
+        }, true);
+
         DriverStation.silenceJoystickConnectionWarning(true);
         // CameraServer.startAutomaticCapture();
 
         /* Default Commands */
         // ! Swerve Drive Default Command (Regular Rotation)
         // drives the robot with a two-axis input from the driver controller
-        tankDrive.setDefaultCommand(new RunCommand(() -> {
-            tankDrive.driveWithInput(getDeadbandedDriverController().getLeft(),
-                                            getDeadbandedDriverController().getRight(),
-                                true);
-        }, tankDrive)
+        m_DiffDrive.setDefaultCommand(new RunCommand(() -> {
+            m_DiffDrive.arcadeDrive(m_driverXbox.getLeft(), m_driverXbox.getRight());
+        }, m_DiffDrive)
         .withName("SwerveDrive DefaultCommand"));
-        // m_robotMap.tankDrive.setToSlow();
+
+        makeAutoChooser();
+        SmartDashboard.putData("Auto Chooser", autoChooser);
+        // this.subsystems.add(m_robotSwerveDrive);
+        // this.subsystems.add(m_robotMap.leftFront);
+        // this.subsystems.add(m_robotMap.rightFront);
+        // this.subsystems.add(m_robotMap.rightBack);
+        // this.subsystems.add(m_robotMap.leftBack);
 
         // ! Swerve Drive One Module Test
         // m_robotSwerveDrive.setDefaultCommand(new RunCommand(() -> {
@@ -133,8 +139,7 @@ public class RobotContainer {
 
 
 
-        autoChooser = AutoBuilder.buildAutoChooser();
-        SmartDashboard.putData("Auto Chooser", autoChooser);
+
     }
 
     /**
@@ -145,26 +150,10 @@ public class RobotContainer {
      */
     private void configureButtonBindings() {
 
-        // ? /* Driver Buttons */
+        new JoystickButton(m_driverXbox, XboxController.A_BUTTON).onTrue(new InstantCommand(() -> {
+            m_DiffDrive.resetOdometry();
+        }));
 
-        // DualJoystickButton(getDeadbandedDriverController(), getVirtualDriverController(), XboxController.A_BUTTON)
-        //     .onTrue(new InstantCommand(() -> m_robotSwerveDrive.resetGyroFlip()));
-            
-        // // ! /* Speed */
-        // new JoystickButton(getDeadbandedDriverController(), XboxController.RIGHT_BUMPER_BUTTON) // final
-        //     .onTrue(new InstantCommand(()  -> m_robotSwerveDrive.shiftUp()));
-        
-        // new JoystickButton(getDeadbandedDriverController(), XboxController.LEFT_BUMPER_BUTTON) // final
-        //     .onTrue(new InstantCommand(() -> m_robotSwerveDrive.shiftDown()));
-
-        // new Trigger(() -> getDeadbandedDriverController().getPOV() == 270)
-        //     .onTrue(new InstantCommand(() -> m_robotSwerveDrive.shiftDownRot()));
-
-        // new Trigger(() -> getDeadbandedDriverController().getPOV() == 90)
-        //     .onTrue(new InstantCommand(() -> m_robotSwerveDrive.shiftUpRot()));
-          
-        // ?  /* Operator Buttons */
-            
         // ? /* Programer Buttons (Controller 3)*/
 
         // * /* Auto Recording */
@@ -180,6 +169,7 @@ public class RobotContainer {
         //     new VirtualController[]{getVirtualDriverController(), getVirtualOperatorController()},
         //     true, false))
         //     .onFalse(new InstantCommand());
+
     }
     
     /**
@@ -214,8 +204,62 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        // return autoPlayback;
-        return autoChooser.getSelected();
+
+
+        //return autoPlayback;
+        //return new GotoPositionCommand(m_robotSwerveDrive, m_vision)
+        //return autoChooser.getSelected();
+	// try{
+	// //     // Load the path you want to follow using its name in the GUI
+    //     return autoCommand;
+	// } catch (Exception e) {
+	//     DriverStation.reportError("Path planner error: " + e.getMessage(), e.getStackTrace());
+	    return autoCommand;
+	// }
+    // return new PathPlannerAuto("Line-up-no-arm");
+	// zach told me to do the below comment
+	//return new GotoPositionCommand(m_robotSwerveDrive, m_vision);
+      //  return new GotoPositionCommand(m_robotSwerveDrive, m_vision, AutoConstants.targetpos);
+    }
+
+    public boolean autoChooserUpdated = false;
+    public void makeAutoChooser() {
+        autoChooser = new SendableChooser<String>();
+        
+        File dir;
+
+        if(RobotBase.isReal()) {
+            dir = new File("/home/lvuser/deploy/pathplanner/autos/");
+        } else {
+            // dir = new File("C:\\Users\\Ridgebotics\\Documents\\GitHub\\2025RidgeScape\\src\\main\\deploy\\pathplanner\\autos\\");
+            dir = new File("/home/astatin3/Documents/GitHub/2025RidgeScape/src/main/deploy/pathplanner/autos");
+        }
+
+        String[] autos = dir.list();
+
+        if(autos == null) return;
+
+        for (String auto : autos) {
+            if (auto.endsWith(".auto"))
+                autoChooser.addOption(auto.replaceAll(".auto", ""), auto.replaceAll(".auto", ""));
+            // System.out.println(auto);
+        }
+
+        autoChooser.onChange((filename) -> {
+            autoChooserUpdated = true;
+            // if (filename.equals("Taxi")) {
+            //     autoCommand = new SequentialCommandGroup(
+            //         new MoveForTimeCommand(m_robotSwerveDrive, 
+            //             new Translation2d(0, -1), 
+            //             new Translation2d(), 1000, true
+            //     ), new InstantCommand(()-> {m_robotSwerveDrive.softStop();} , m_robotSwerveDrive));
+            // } else {
+                autoCommand = new PathPlannerAuto(filename);
+            // }
+            System.out.println("Robot Auto Changed " + filename);
+        });
+        // SmartDashboard.putData(autoChooser);
+
     }
 
     /**
@@ -236,11 +280,7 @@ public class RobotContainer {
         return this.m_operatorXbox;
     }
 
-    public VirtualController getVirtualDriverController() {
-        return m_virtualDriver;
-    }
-
-    public VirtualController getVirtualOperatorController() {
-        return m_virtualOperator;
+    public ButtonBox getButtonBox() {
+        return this.m_buttonBox;
     }
 }
