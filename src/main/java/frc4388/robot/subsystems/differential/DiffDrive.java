@@ -11,10 +11,12 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelPositions;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc4388.utility.status.Queryable;
 import frc4388.utility.status.Status;
 import frc4388.utility.structs.Drivebase;
+import pabeles.concurrency.IntOperatorTask.Max;
 
 public class DiffDrive extends SubsystemBase implements Drivebase, Queryable {
     DiffIO io;
@@ -39,8 +41,8 @@ public class DiffDrive extends SubsystemBase implements Drivebase, Queryable {
         Logger.processInputs("gyro", gyroState);
 
         var speeds = new DifferentialDriveWheelPositions(
-            DiffConstants.WHEEL_RADIUS_TO_ARC.times(state.leftOutputPosition),
-            DiffConstants.WHEEL_RADIUS_TO_ARC.times(state.rightOutputPosition)
+            DiffConstants.WHEEL_RADIUS_TO_ARC.times(-state.leftOutputPosition),
+            DiffConstants.WHEEL_RADIUS_TO_ARC.times(-state.rightOutputPosition)
         );
 
         odometry.update(gyroState.yaw, speeds);
@@ -54,28 +56,30 @@ public class DiffDrive extends SubsystemBase implements Drivebase, Queryable {
         );
     }
 
-    private PID rotPid = new PID(DiffConstants.ROT_GAINS);
+    private PID rotPid = new PID(DiffConstants.ROT_GAINS); 
 
     @Override
     public void driveFieldRelative(Translation2d left, Translation2d right) {
+        double magnatude = right.getNorm();
         // In case the driver's stick is inside the deadband
-        if(right.getNorm() == 0) {
+        if(magnatude == 0) {
             io.driveWithInput(0, 0);
             return;
         };
 
-        double targetAngle = right.getAngle().getRotations();
+        double targetAngle = right.getAngle().getRotations() + 0.25;
         double curAngle = gyroState.yaw.getRotations();
 
-        double error = targetAngle - curAngle - signedFloor(curAngle);
+        double error = targetAngle - signedFloor(curAngle);
         if(error > 0.5) {
             error -= 1;
         }else if(error < -0.5) {
             error += 1;
         }
+        SmartDashboard.putNumber("error", error);
 
-        double move = 0;
-        double rot = rotPid.update(targetAngle - curAngle);
+        double move = (0.5 - Math.abs(error))*2 * magnatude;
+        double rot = Math.max(rotPid.update(error) * magnatude, magnatude);
 
         io.driveWithInput(
             move + rot, 

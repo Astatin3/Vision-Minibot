@@ -9,9 +9,12 @@ import frc4388.utility.structs.Gains;
 
 public class DiffConstants {
     
-    public static final Distance WHEEL_RADIUS_TO_ARC = Inches.of(2.5).times(Math.PI * 2); //meters
+    public static final Distance WHEEL_RADIUS = Inches.of(2.5);
+    public static final Distance WHEEL_RADIUS_TO_ARC = WHEEL_RADIUS.times(Math.PI * 2); //meters
     public static final Distance TRACK_DISPLACEMENT = Inches.of(6.5); //meters
     public static final Distance TRACK_WIDTH = TRACK_DISPLACEMENT.times(2);
+
+    public static final int ENCODER_TICKS_PER_ROTATION = 1100;
 
     public static final Gains ROT_GAINS = new Gains(20, 0, 0);
 

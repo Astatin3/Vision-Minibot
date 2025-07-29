@@ -7,6 +7,7 @@
 
 package frc4388.robot;
 
+import edu.wpi.first.math.geometry.Translation2d;
 // Drive Systems
 import edu.wpi.first.wpilibj.DriverStation;
 
@@ -25,8 +26,10 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 // Autos
 import frc4388.utility.controller.VirtualController;
+import frc4388.robot.commands.MoveForTimeCommand;
 import frc4388.robot.commands.wait.waitSupplier;
 import frc4388.robot.constants.Constants.OIConstants;
 import frc4388.robot.subsystems.differential.DiffDrive;
@@ -89,8 +92,8 @@ public class RobotContainer {
         configureVirtualButtonBindings();
         
         DeferredBlock.addBlock(() -> { // Called on first robot enable
-            // m_robotSwerveDrive.resetGyro();
-        }, false);
+            m_DiffDrive.resetOdometry();
+        }, true);
         DeferredBlock.addBlock(() -> { // Called on every robot enable
             TimesNegativeOne.update();
         }, true);
@@ -214,7 +217,14 @@ public class RobotContainer {
     //     return autoCommand;
 	// } catch (Exception e) {
 	//     DriverStation.reportError("Path planner error: " + e.getMessage(), e.getStackTrace());
-	    return autoCommand;
+	    return new SequentialCommandGroup(
+            new MoveForTimeCommand(m_DiffDrive, new Translation2d(0, -0.5), new Translation2d(), 2000),
+            new MoveForTimeCommand(m_DiffDrive, new Translation2d(0, 0.5), new Translation2d(), 1000),
+            new MoveForTimeCommand(m_DiffDrive, new Translation2d(0, -1), new Translation2d(), 500),
+            new MoveForTimeCommand(m_DiffDrive, new Translation2d(), new Translation2d(-1, 0), 250),
+            new MoveForTimeCommand(m_DiffDrive, new Translation2d(), new Translation2d(1, 0), 500),
+            new MoveForTimeCommand(m_DiffDrive, new Translation2d(0, 0.5), new Translation2d(-0.5, 0), 500)
+        );
 	// }
     // return new PathPlannerAuto("Line-up-no-arm");
 	// zach told me to do the below comment
