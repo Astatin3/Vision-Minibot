@@ -17,4 +17,7 @@ public interface DiffIO {
     public default void driveWithInput(double leftInput, double rightInput) {}
 
     public default void updateInputs(DiffState state) {}
+
+    public default void shiftDown() {}
+    public default void shiftUp() {}
 }

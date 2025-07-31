@@ -21,31 +21,31 @@ import pabeles.concurrency.IntOperatorTask.Max;
 public class DiffDrive extends SubsystemBase implements Drivebase, Queryable {
     DiffIO io;
     DiffStateAutoLogged state = new DiffStateAutoLogged();
-    GyroIO gyroIO;
-    GyroStateAutoLogged gyroState = new GyroStateAutoLogged();
+    // GyroIO gyroIO;
+    // GyroStateAutoLogged gyroState = new GyroStateAutoLogged();
 
 
     DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(DiffConstants.TRACK_WIDTH);
     DifferentialDrivePoseEstimator odometry = new DifferentialDrivePoseEstimator(kinematics, new Rotation2d(), 0, 0, new Pose2d());
 
-    public DiffDrive(DiffIO io, GyroIO gyroIO) {
+    public DiffDrive(DiffIO io) {
         this.io = io;
-        this.gyroIO = gyroIO;
+        // this.gyroIO = gyroIO;
     }
 
     @Override
     public void periodic() {
         io.updateInputs(state);
         Logger.processInputs(getName(), state);
-        gyroIO.updateInputs(gyroState);
-        Logger.processInputs("gyro", gyroState);
+        // gyroIO.updateInputs(gyroState);
+        // Logger.processInputs("gyro", gyroState);
 
         var speeds = new DifferentialDriveWheelPositions(
             DiffConstants.WHEEL_RADIUS_TO_ARC.times(-state.leftOutputPosition),
             DiffConstants.WHEEL_RADIUS_TO_ARC.times(-state.rightOutputPosition)
         );
 
-        odometry.update(gyroState.yaw, speeds);
+        // odometry.update(gyroState.yaw, speeds);
     }
 
     @Override
@@ -58,34 +58,34 @@ public class DiffDrive extends SubsystemBase implements Drivebase, Queryable {
 
     private PID rotPid = new PID(DiffConstants.ROT_GAINS); 
 
-    @Override
-    public void driveFieldRelative(Translation2d left, Translation2d right) {
-        double magnatude = right.getNorm();
-        // In case the driver's stick is inside the deadband
-        if(magnatude == 0) {
-            io.driveWithInput(0, 0);
-            return;
-        };
+    // @Override
+    // public void driveFieldRelative(Translation2d left, Translation2d right) {
+    //     double magnatude = right.getNorm();
+    //     // In case the driver's stick is inside the deadband
+    //     if(magnatude == 0) {
+    //         io.driveWithInput(0, 0);
+    //         return;
+    //     };
 
-        double targetAngle = right.getAngle().getRotations() + 0.25;
-        double curAngle = gyroState.yaw.getRotations();
+    //     double targetAngle = right.getAngle().getRotations() + 0.25;
+    //     double curAngle = gyroState.yaw.getRotations();
 
-        double error = targetAngle - signedFloor(curAngle);
-        if(error > 0.5) {
-            error -= 1;
-        }else if(error < -0.5) {
-            error += 1;
-        }
-        SmartDashboard.putNumber("error", error);
+    //     double error = targetAngle - signedFloor(curAngle);
+    //     if(error > 0.5) {
+    //         error -= 1;
+    //     }else if(error < -0.5) {
+    //         error += 1;
+    //     }
+    //     SmartDashboard.putNumber("error", error);
 
-        double move = (0.5 - Math.abs(error))*2 * magnatude;
-        double rot = Math.max(rotPid.update(error) * magnatude, magnatude);
+    //     double move = (0.5 - Math.abs(error))*2 * magnatude;
+    //     double rot = Math.max(rotPid.update(error) * magnatude, magnatude);
 
-        io.driveWithInput(
-            move + rot, 
-            move - rot
-        );
-    }
+    //     io.driveWithInput(
+    //         move + rot, 
+    //         move - rot
+    //     );
+    // }
 
     private double signedFloor(double x){
         if(x > 0) {
@@ -97,8 +97,17 @@ public class DiffDrive extends SubsystemBase implements Drivebase, Queryable {
 
     @Override
     public void resetOdometry() {
-        gyroIO.reset();
+        // gyroIO.reset();
         odometry.resetPose(new Pose2d());
+    }
+
+
+    public void shiftUp() {
+        io.shiftUp();
+    }
+    
+    public void shiftDown() {
+        io.shiftDown();
     }
 
 

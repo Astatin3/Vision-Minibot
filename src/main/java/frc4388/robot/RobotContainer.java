@@ -53,7 +53,7 @@ public class RobotContainer {
     public final RobotMap m_robotMap = RobotMap.configureReal();
     
     /* Subsystems */
-    public final DiffDrive m_DiffDrive = new DiffDrive(m_robotMap.m_DiffDrive, m_robotMap.m_gyro);
+    public final DiffDrive m_DiffDrive = new DiffDrive(m_robotMap.m_DiffDrive);
     // public final LED m_robotLED = new LED();
     // public final Vision m_vision = new Vision(m_robotMap.leftCamera, m_robotMap.rightCamera);
     // public final Elevator m_robotElevator = new Elevator(m_robotMap.elevator, m_robotMap.endeffector, m_robotMap.basinLimitSwitch, m_robotMap.endeffectorLimitSwitch, m_robotMap.IRIntakeBeam, m_robotLED);
@@ -155,6 +155,15 @@ public class RobotContainer {
 
         new JoystickButton(m_driverXbox, XboxController.A_BUTTON).onTrue(new InstantCommand(() -> {
             m_DiffDrive.resetOdometry();
+        }));
+
+        new JoystickButton(m_driverXbox, XboxController.LEFT_BUMPER_BUTTON).onTrue(new InstantCommand(() -> {
+            m_DiffDrive.shiftUp();
+        }));
+
+        
+        new JoystickButton(m_driverXbox, XboxController.RIGHT_BUMPER_BUTTON).onTrue(new InstantCommand(() -> {
+            m_DiffDrive.shiftDown();
         }));
 
         // ? /* Programer Buttons (Controller 3)*/

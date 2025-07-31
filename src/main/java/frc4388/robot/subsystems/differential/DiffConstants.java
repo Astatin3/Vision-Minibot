@@ -19,10 +19,10 @@ public class DiffConstants {
     public static final Gains ROT_GAINS = new Gains(20, 0, 0);
 
     public static final class IDs {
-        public static final CanDevice FRONT_LEFT_MOTOR = new CanDevice("SRX_FRONT_LEFT", 4);
-        public static final CanDevice FRONT_RIGHT_MOTOR = new CanDevice("SRX_FRONT_RIGHT", 1);
-        public static final CanDevice REAR_LEFT_MOTOR = new CanDevice("SRX_REAR_LEFT", 2);
-        public static final CanDevice REAR_RIGHT_MOTOR = new CanDevice("SRX_REAR_RIGHT", 3);
+        public static final CanDevice FRONT_LEFT_MOTOR = new CanDevice("SRX_FRONT_LEFT", 2);
+        public static final CanDevice FRONT_RIGHT_MOTOR = new CanDevice("SRX_FRONT_RIGHT", 4);
+        public static final CanDevice REAR_LEFT_MOTOR = new CanDevice("SRX_REAR_LEFT", 3);
+        public static final CanDevice REAR_RIGHT_MOTOR = new CanDevice("SRX_REAR_RIGHT", 5);
         
         // public static final CanDevice FRONT_LEFT_MOTOR = new CanDevice("SRX_FRONT_LEFT", 3);
         // public static final CanDevice FRONT_RIGHT_MOTOR = new CanDevice("SRX_FRONT_RIGHT", 2);
